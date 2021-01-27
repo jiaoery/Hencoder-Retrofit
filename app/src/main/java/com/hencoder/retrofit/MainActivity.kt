@@ -11,31 +11,33 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-    val retrofit = Retrofit.Builder()
-      .baseUrl("https://api.github.com/")
-      .addConverterFactory(GsonConverterFactory.create())
-      .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-      .build()
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://api.github.com/")
+                //转换工具
+                .addConverterFactory(GsonConverterFactory.create())
+                //返回回调
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
 
-    val service = retrofit.create(GitHubService::class.java)
+        val service = retrofit.create(GitHubService::class.java)
 
-    val repos: Call<List<Repo>> = service.listRepos("octocat")
+        val repos: Call<List<Repo>> = service.listRepos("jiaoery")
 
-    repos.enqueue(object : Callback<List<Repo>?> {
-      override fun onFailure(call: Call<List<Repo>?>, t: Throwable) {
+        repos.enqueue(object : Callback<List<Repo>?> {
+            override fun onFailure(call: Call<List<Repo>?>, t: Throwable) {
 
-      }
+            }
 
-      override fun onResponse(call: Call<List<Repo>?>, response: Response<List<Repo>?>) {
-        println("Response: ${response.body()!![0].name}")
-      }
-    })
+            override fun onResponse(call: Call<List<Repo>?>, response: Response<List<Repo>?>) {
+                println("Response: ${response.body()!![0].name}")
+            }
+        })
 
-    val reposRx = service.listReposRx("octocat")
+        val reposRx = service.listReposRx("octocat")
 //    reposRx.subscribe()
-  }
+    }
 }
